@@ -386,7 +386,11 @@ class ILCAgent(Agent):
 
         self.tz = to_zone = dateutil.tz.gettz(tz_info)
         start_time = parser.parse(target_info["start"]).astimezone(to_zone)
-        end_time = parser.parse(target_info.get("end", start_time.replace(hour=23, minute=59, second=45))).astimezone(to_zone)
+        end_time_from_target_info = target_info.get("end")
+        if end_time_from_target_info:
+            end_time = parser.parse(end_time_from_target_info).astimezone(to_zone)
+        else:
+            end_time = start_time.replace(hour=23, minute=59, second=45).astimezone(to_zone)
 
         demand_goal = float(target_info["target"])
         task_id = target_info["id"]
