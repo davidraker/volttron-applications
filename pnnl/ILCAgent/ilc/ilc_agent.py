@@ -392,7 +392,9 @@ class ILCAgent(Agent):
         else:
             end_time = start_time.replace(hour=23, minute=59, second=45).astimezone(to_zone)
 
-        demand_goal = float(target_info["target"])
+        demand_goal = target_info["target"]
+        if demand_goal:
+            demand_goal = float(demand_goal)
         task_id = target_info["id"]
         _log.debug("TARGET - id: {} - start: {} - goal: {}".format(target_info["id"], start_time, demand_goal))
         for key, value in self.tasks.items():
