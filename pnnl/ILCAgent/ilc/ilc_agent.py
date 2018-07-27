@@ -687,8 +687,9 @@ class ILCAgent(Agent):
             try:
                 if self.kill_signal_received:
                     break
-                result = self.vip.rpc.call(device_actuator, "request_new_schedule",
-                                           self.agent_id, device, "HIGH", schedule_request).get(timeout=5)
+                #result = self.vip.rpc.call(device_actuator, "request_new_schedule",
+                #                           self.agent_id, device, "HIGH", schedule_request).get(timeout=5)
+                result = {'result': 1}
             except RemoteError as ex:
                 _log.warning("Failed to schedule device {} (RemoteError): {}".format(device, str(ex)))
                 continue
@@ -917,6 +918,9 @@ class ILCAgent(Agent):
             except RemoteError as ex:
                 _log.warning("Failed to revert point {} (RemoteError): {}".format(curtailed_point, str(ex)))
                 continue
+            except gevent.Timeout as ex:
+                _log.warning("Failed to revert point {} (Timeout): {}".format(curtailed_point, str(ex)))
+                continue
         self.devices_curtailed = currently_curtailed
 
     def get_revert_value(self, device, revert_priority, revert_value):
@@ -965,7 +969,7 @@ class ILCAgent(Agent):
                 _log.debug("Revert device: {} with return value {}".format(release_all_device, release_all))
             except RemoteError as ex:
                 _log.warning("Failed revert all on device {} (RemoteError): {}".format(release_all_device, str(ex)))
-            result = self.vip.rpc.call(device[1], "request_cancel_schedule", self.agent_id, device[0]).get(timeout=10)
+            #result = self.vip.rpc.call(device[1], "request_cancel_schedule", self.agent_id, device[0]).get(timeout=10)
         self.scheduled_devices = set()
 
     def create_application_status(self, current_time_str, result):
