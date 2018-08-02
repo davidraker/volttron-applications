@@ -565,6 +565,10 @@ class ILCAgent(Agent):
                     self.curtailment.reset_curtail_count()
 
             if self.running_ahp:
+                if self.demand_limit is None:
+                    _log.debug("Demand limit has been set to None. Running end curtail method")
+                    self.end_curtail(current_time)
+
                 if current_time >= self.next_curtail_confirm and (self.devices_curtailed or self.stagger_off_time):
                     self.confirm_curtail(average_power, current_time)
                     _log.debug("Current reported time: {} ------- Next Curtail Confirm: {}".format(current_time,
