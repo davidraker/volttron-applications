@@ -979,6 +979,8 @@ class ILCAgent(Agent):
                 _log.debug("Revert device: {} with return value {}".format(release_all_device, release_all))
             except RemoteError as ex:
                 _log.warning("Failed revert all on device {} (RemoteError): {}".format(release_all_device, str(ex)))
+            except gevent.Timeout as ex:
+                _log.warning("Failed revert all on device {} (Gevent Timeout): {}".format(release_all_device, str(ex)))
             #result = self.vip.rpc.call(device[1], "request_cancel_schedule", self.agent_id, device[0]).get(timeout=10)
         self.scheduled_devices = set()
 
