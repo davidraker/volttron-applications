@@ -263,6 +263,7 @@ class ILCAgent(Agent):
         self.tasks = {}
         self.tz = None
         self.simulation_running = config.get("simulation_running", False)
+        self.ilc_lock = False
 
     @Core.receiver("onstart")
     def starting_base(self, sender, **kwargs):
@@ -528,7 +529,8 @@ class ILCAgent(Agent):
         """
         try:
 
-            if self.kill_signal_received:
+            if self.kill_signal_received or self.ilc_lock:
+                print('ILC Locked.  Skipping load_message_handler.')
                 return
             data = message[0]
             meta = message[1]
@@ -659,10 +661,11 @@ class ILCAgent(Agent):
             if not score_order:
                 _log.info("All devices are off, nothing to curtail.")
                 return
-
+            self.ilc_lock = True
             self.device_group_size = None
             scored_devices = self.actuator_request(score_order)
             self.curtail(scored_devices, bldg_power, current_time)
+            self.ilc_lock = False
         self.create_application_status(format_timestamp(current_time), result)
 
     def actuator_request(self, score_order):
